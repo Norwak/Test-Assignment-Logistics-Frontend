@@ -4,15 +4,20 @@ import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import RootLayout from './layout/Root.layout';
 import HomePage from './pages/Home.page';
-import Error404Page from './pages/Error404.page';
 import { offersLoader } from './components/tables/OffersFrontTable';
+import ErrorPage from './pages/Error.page';
+import '@gravity-ui/uikit/styles/fonts.css';
+import '@gravity-ui/uikit/styles/styles.css';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import { ThemeProvider } from '@gravity-ui/uikit';
 
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    // errorElement: <Error404Page />,
+    errorElement: <ErrorPage />,
     children: [
       {index: true, element: <HomePage />, loader: offersLoader}
     ]
@@ -22,6 +27,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <ThemeProvider theme="light">
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>,
 )

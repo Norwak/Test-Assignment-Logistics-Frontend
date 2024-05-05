@@ -1,5 +1,5 @@
-import { Table } from "@gravity-ui/uikit";
-import { useLoaderData } from "react-router-dom";
+import { Table, withTableSorting } from "@gravity-ui/uikit";
+import { json, useLoaderData } from "react-router-dom";
 import { padZeros } from "../../utility/functions";
 import parse from 'html-react-parser';
 
@@ -25,13 +25,13 @@ export default function OffersFrontTable() {
   const offers = useLoaderData() as Item[];
 
   const columns = [
-    {id: 'id', name: 'Номер заявки'},
-    {id: 'humanDate', name: 'Дата'},
-    {id: 'client.name', name: 'Клиент'},
-    {id: 'carrier.name', name: 'Перевозчик'},
-    {id: 'carrier.phone', name: 'Телефон'},
+    {id: 'id', name: 'Номер заявки', meta: {sort: true}},
+    {id: 'humanDate', name: 'Дата', meta: {sort: true}},
+    {id: 'client.name', name: 'Клиент', meta: {sort: true}},
+    {id: 'carrier.name', name: 'Перевозчик', meta: {sort: true}},
+    {id: 'carrier.phone', name: 'Телефон', meta: {sort: true}},
     {id: 'notes', name: 'Комментарии'},
-    {id: 'status', name: 'Статус'},
+    {id: 'humanStatus', name: 'Статус', meta: {sort: true}},
     {id: 'carrier.atiLink', name: 'Ссылка на ATI'},
   ];
 
@@ -66,13 +66,29 @@ export default function OffersFrontTable() {
   //   {id: 2, date: '2024-09-09 09:09:09', notes: null, client: {name: 'Ozon'}, carrier: {name: 'Деловые линии', phone: null, atiId: null}},
   // ];
 
+  const MyTable = withTableSorting(Table);
+
   return (
-    <Table data={offers} columns={columns} />
+    <>
+      <div className="plr10">
+        <div className="gravity-table__header flex-csb gap15">
+          <div>Поиск по таблице через Ctrl+F</div>
+          <div>Всего {offers.length} строк{[2,3,4].includes(offers.length % 10) ? 'и' : ''}</div>
+        </div>
+      </div>
+      <div className="gravity-table__itself mt10">
+        <MyTable data={offers} columns={columns} />
+      </div>
+    </>
   );
 }
 
 
 export async function offersLoader() {
-  const response = await fetch('http://localhost:3000/offers/search');
-  return await response.json();
+  try {
+    const response = await fetch('http://localhost:3000/offers/search');
+    return await response.json();
+  } catch (error) {
+    throw json({message: 'Не получилось скачать данные таблицы.'}, {status: 500});
+  }
 }
