@@ -1,9 +1,13 @@
 import {Container, Select} from '@gravity-ui/uikit';
-import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { RootState } from '../store/store';
+import { useDispatch } from 'react-redux';
+import { setIsAdmin } from '../store/isAdmin.slice';
 
 export default function Header() {
-  const [isAdmin, setIsAdmin] = React.useState<string[]>(['false']);
+  const isAdmin = useSelector((state: RootState) => state.isAdmin.value);
+  const dispatch = useDispatch();
 
   return (
     <header className='header ptb15'>
@@ -12,7 +16,7 @@ export default function Header() {
           <div className="flex-csb rowrev gap15">
 
             <div className="header__switch">
-              <Select value={isAdmin} onUpdate={(nextValue) => setIsAdmin(nextValue)}>
+              <Select value={isAdmin} onUpdate={(nextValue) => dispatch(setIsAdmin(nextValue))}>
                 <Select.Option value='false'>Сайт</Select.Option>
                 <Select.Option value='true'>Админ панель</Select.Option>
               </Select>
