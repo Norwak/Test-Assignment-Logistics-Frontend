@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
@@ -11,12 +11,13 @@ import '@gravity-ui/uikit/styles/styles.css';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { ThemeProvider } from '@gravity-ui/uikit';
+import Loading from './components/Loading';
 
 
-const router = createBrowserRouter([
+const router = (setLoaded: Dispatch<SetStateAction<boolean>>) => createBrowserRouter([
   {
     path: '/',
-    element: <RootLayout />,
+    element: <RootLayout setLoaded={setLoaded} />,
     errorElement: <ErrorPage />,
     children: [
       {index: true, element: <HomePage />, loader: offersLoader}
@@ -25,12 +26,20 @@ const router = createBrowserRouter([
 ]);
 
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider theme="light">
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </Provider>
-  </React.StrictMode>,
-)
+function Root() {
+  const [pageLoaded, setLoaded] = useState<boolean>(false);
+  
+  return (
+    <React.StrictMode>
+      <Provider store={store}>
+        <ThemeProvider theme="light">
+          <RouterProvider router={router(setLoaded)} />
+          {!pageLoaded && <Loading />}
+        </ThemeProvider>
+      </Provider>
+    </React.StrictMode>
+  );
+}
+
+
+ReactDOM.createRoot(document.getElementById('root')!).render(<Root />);

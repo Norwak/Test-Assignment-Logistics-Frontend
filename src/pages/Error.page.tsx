@@ -22,6 +22,9 @@ export default function ErrorPage() {
           <p>{error.data.message}</p>
         </Container>
       </main>
+      <style>
+        {'.loading {display: none;}'}
+      </style>
     </>
   );
 }

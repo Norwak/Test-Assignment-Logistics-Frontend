@@ -1,7 +1,12 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 
-export default function RootLayout() {
+const RootLayout: React.FC<{setLoaded: Dispatch<SetStateAction<boolean>>}> = (props) => {
+  useEffect(() => {
+    props.setLoaded(true);
+  }, []);
+
   return (
     <>
       <Header />
@@ -11,3 +16,5 @@ export default function RootLayout() {
     </>
   );
 }
+
+export default RootLayout;
