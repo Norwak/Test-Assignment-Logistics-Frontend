@@ -5,15 +5,16 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import RootLayout from './layout/Root.layout';
 import HomePage from './pages/Home.page';
 import Error404Page from './pages/Error404.page';
+import { offersLoader } from './components/tables/OffersFrontTable';
 
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    errorElement: <Error404Page />,
+    // errorElement: <Error404Page />,
     children: [
-      {index: true, element: <HomePage />}
+      {index: true, element: <HomePage />, loader: offersLoader}
     ]
   }
 ]);
