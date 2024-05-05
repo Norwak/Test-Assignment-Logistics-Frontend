@@ -25,13 +25,13 @@ export default function Header() {
             {isAdmin.includes('true') && (
               <nav className="header__menu flex-cl gap15">
                 <div className="header__menu-item">
-                  <Link to="/offers/">Заявки</Link>
+                  <Link to="/admin/offers/">Заявки</Link>
                 </div>
                 <div className="header__menu-item">
-                  <Link to="/clients/">Клиенты</Link>
+                  <Link to="/admin/clients/">Клиенты</Link>
                 </div>
                 <div className="header__menu-item">
-                  <Link to="/carriers/">Перевозчики</Link>
+                  <Link to="/admin/carriers/">Перевозчики</Link>
                 </div>
               </nav>
             )}
