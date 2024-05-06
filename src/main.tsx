@@ -12,6 +12,8 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { ThemeProvider } from '@gravity-ui/uikit';
 import Loading from './components/Loading';
+import AdminOffersPage from './pages/AdminOffers.page';
+import { deleteOfferAction } from './components/tables/OffersAdminTable';
 
 
 const router = (setLoaded: Dispatch<SetStateAction<boolean>>) => createBrowserRouter([
@@ -20,7 +22,14 @@ const router = (setLoaded: Dispatch<SetStateAction<boolean>>) => createBrowserRo
     element: <RootLayout setLoaded={setLoaded} />,
     errorElement: <ErrorPage />,
     children: [
-      {index: true, element: <HomePage />, loader: offersLoader}
+      {index: true, element: <HomePage />, loader: offersLoader},
+      {
+        path: 'admin/',
+        action: deleteOfferAction,
+        children: [
+          {index: true, element: <AdminOffersPage />, loader: offersLoader}
+        ],
+      },
     ]
   }
 ]);

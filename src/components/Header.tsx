@@ -1,13 +1,23 @@
 import {Container, Select} from '@gravity-ui/uikit';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { RootState } from '../store/store';
-import { useDispatch } from 'react-redux';
-import { setIsAdmin } from '../store/isAdmin.slice';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export default function Header() {
-  const isAdmin = useSelector((state: RootState) => state.isAdmin.value);
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {pathname} = useLocation();
+
+  let isAdmin = ['false'];
+  if (/\/admin\//.test(pathname)) {
+    isAdmin = ['true'];
+  }
+
+  function toggleAdmin(value: string[]) {
+    if (value.includes('false')) {
+      navigate('/')
+    } else {
+      navigate('/admin/')
+    }
+  }
+
 
   return (
     <header className='header ptb15'>
@@ -16,7 +26,7 @@ export default function Header() {
           <div className="flex-csb rowrev gap15">
 
             <div className="header__switch">
-              <Select value={isAdmin} onUpdate={(nextValue) => dispatch(setIsAdmin(nextValue))}>
+              <Select value={isAdmin} onUpdate={toggleAdmin}>
                 <Select.Option value='false'>Сайт</Select.Option>
                 <Select.Option value='true'>Админ панель</Select.Option>
               </Select>
@@ -25,7 +35,7 @@ export default function Header() {
             {isAdmin.includes('true') && (
               <nav className="header__menu flex-cl gap15">
                 <div className="header__menu-item">
-                  <Link to="/admin/offers/">Заявки</Link>
+                  <Link to="/admin/">Заявки</Link>
                 </div>
                 <div className="header__menu-item">
                   <Link to="/admin/clients/">Клиенты</Link>

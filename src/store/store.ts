@@ -1,10 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import isAdminSliceReducer from "./isAdmin.slice";
 
 export const store = configureStore({
-  reducer: {
-    isAdmin: isAdminSliceReducer,
-  }
+  reducer: {}
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
