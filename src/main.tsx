@@ -17,13 +17,23 @@ import { deleteOfferAction } from './components/tables/OffersAdminTable';
 import EditOfferPage, { editOfferLoader } from './pages/EditOffer.page';
 import { offerFormAction } from './components/forms/OfferForm';
 import NewOfferPage, { newOfferLoader } from './pages/NewOffer.page';
+import AdminClientsPage from './pages/AdminClients.page';
+import { clientsLoader, deleteClientAction } from './components/tables/ClientsAdminTable';
+import NewClientPage from './pages/NewClient.page';
+import EditClientPage, { editClientLoader } from './pages/EditClient.page';
+import { clientFormAction } from './components/forms/ClientForm';
+import AdminCarriersPage from './pages/AdminCarriers.page';
+import { carriersLoader, deleteCarrierAction } from './components/tables/CarriersAdminTable';
+import EditCarrierPage, { editCarrierLoader } from './pages/EditCarrier.page';
+import NewCarrierPage from './pages/NewCarrier.page';
+import { carrierFormAction } from './components/forms/CarrierForm';
 
 
 const router = (setLoaded: Dispatch<SetStateAction<boolean>>) => createBrowserRouter([
   {
     path: '/',
     element: <RootLayout setLoaded={setLoaded} />,
-    // errorElement: <ErrorPage />,
+    errorElement: <ErrorPage />,
     children: [
       {index: true, element: <HomePage />, loader: offersLoader},
       {
@@ -32,7 +42,25 @@ const router = (setLoaded: Dispatch<SetStateAction<boolean>>) => createBrowserRo
         children: [
           {index: true, element: <AdminOffersPage />, loader: offersLoader},
           {path: 'new/', element: <NewOfferPage />, loader: newOfferLoader, action: offerFormAction},
-          {path: ':id/edit/', element: <EditOfferPage />, loader: editOfferLoader, action: offerFormAction}
+          {path: ':id/edit/', element: <EditOfferPage />, loader: editOfferLoader, action: offerFormAction},
+          {
+            path: 'clients/',
+            action: deleteClientAction,
+            children: [
+              {index: true, element: <AdminClientsPage />, loader: clientsLoader},
+              {path: 'new/', element: <NewClientPage />, action: clientFormAction},
+              {path: ':id/edit/', element: <EditClientPage />, loader: editClientLoader, action: clientFormAction},
+            ]
+          },
+          {
+            path: 'carriers/',
+            action: deleteCarrierAction,
+            children: [
+              {index: true, element: <AdminCarriersPage />, loader: carriersLoader},
+              {path: 'new/', element: <NewCarrierPage />, action: carrierFormAction},
+              {path: ':id/edit/', element: <EditCarrierPage />, loader: editCarrierLoader, action: carrierFormAction},
+            ]
+          }
         ],
       },
     ]

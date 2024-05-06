@@ -23,13 +23,6 @@ export default function OffersAdminTable() {
   ];
 
   for (const offer of offers) {
-    // const date = new Date(offer.date);
-    // const days = padZeros(date.getDate());
-    // const month = padZeros(date.getMonth()+1);
-    // const year = date.getFullYear();
-    // const hours = padZeros(date.getUTCHours());
-    // const minutes = padZeros(date.getMinutes());
-    // offer.humanDate = `${days}.${month}.${year} ${hours}:${minutes}`;
     offer.humanDate = dateTimeParse(offer.date)?.format('DD.MM.YYYY HH.mm');
 
     switch (offer.status) {
