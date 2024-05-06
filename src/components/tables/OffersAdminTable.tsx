@@ -1,5 +1,5 @@
 import { Table, withTableActions, withTableSorting } from "@gravity-ui/uikit";
-import { json, redirect, useLoaderData, useNavigate, useSubmit } from "react-router-dom";
+import { Link, json, redirect, useLoaderData, useNavigate, useSubmit } from "react-router-dom";
 import { padZeros } from "../../utility/functions";
 import parse from 'html-react-parser';
 import { Offer } from "../../types/Offer.type";
@@ -77,6 +77,7 @@ export default function OffersAdminTable() {
     <>
       <div className="plr10">
         <div className="gravity-table__header flex-csb gap15">
+          <Link to="/admin/new/">Новая заявка</Link>
           <div>Поиск по таблице через Ctrl+F</div>
           <div>Всего {offers.length} строк{[2,3,4].includes(offers.length % 10) ? 'и' : ''}</div>
         </div>

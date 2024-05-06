@@ -1,16 +1,16 @@
-import { Form, Params, json, redirect, useNavigation } from "react-router-dom";
+import { Form, Params, json, redirect, useActionData, useNavigation } from "react-router-dom";
 import { Offer } from "../../types/Offer.type";
 import {DateField} from '@gravity-ui/date-components';
 import {FormRow} from '@gravity-ui/components';
 import { dateTimeParse } from "@gravity-ui/date-utils";
-import { Button, Select, TextArea } from "@gravity-ui/uikit";
+import { Button, Select, TextArea, colorText } from "@gravity-ui/uikit";
 import { useState } from "react";
 import { Client } from "../../types/Client.type";
 import { Carrier } from "../../types/Carrier.type";
 
 type DataOfferForm = {
   data: {
-    offer: Offer,
+    offer?: Offer,
     clients: Client[],
     carriers: Carrier[]
   },
@@ -19,21 +19,42 @@ type DataOfferForm = {
 
 const OfferForm: React.FC<DataOfferForm> = ({data, intent = 'NEW'}) => {
   const navigation = useNavigation();
+  const responseData = useActionData() as {message: string[]} | undefined;
   const isSubmitting = navigation.state === 'submitting';
 
-  const offer = data.offer;
   const clients = data.clients;
   const carriers = data.carriers;
+  
+  let statusDefault = ['0'];
+  let clientIdDefault = ['-'];
+  let carrierIdDefault = ['-'];
+  let date = dateTimeParse();
 
-  const [status, setStatus] = useState<string[]>([offer.status.toString()]);
-  const [clientId, setClientId] = useState<string[]>([offer.client.id.toString()]);
-  const [carrierId, setCarrier] = useState<string[]>([offer.carrier.id.toString()]);
+  if (data.offer && intent === 'EDIT') {
+    const offer = data.offer;
 
-  const date = dateTimeParse(offer.date);
+    statusDefault = [offer.status.toString()];
+    clientIdDefault = [offer.client.id.toString()];
+    carrierIdDefault = [offer.carrier.id.toString()];
+  
+    date = dateTimeParse(offer.date);
+  }
+
+  const [status, setStatus] = useState<string[]>(statusDefault);
+  const [clientId, setClientId] = useState<string[]>(clientIdDefault);
+  const [carrierId, setCarrierId] = useState<string[]>(carrierIdDefault);
+
 
   return (
     <>
-      <h1>Редактирование заявки №{offer.id}</h1>
+      {!data.offer && <h1>Новая заявка</h1>}
+      {data.offer && <h1>Редактирование заявки №{data.offer.id}</h1>}
+
+      {responseData && responseData.message && (
+        <ul className="error-list mt10">
+          {Object.values(responseData.message).map(err => <li key={err}>{err}</li>)}
+        </ul>
+      )}
 
       <Form className="mt30" method="POST">
         <input type="hidden" name="intent" defaultValue={intent} />
@@ -60,13 +81,13 @@ const OfferForm: React.FC<DataOfferForm> = ({data, intent = 'NEW'}) => {
         </FormRow>
 
         <FormRow label="Перевозчик:">
-          <Select value={carrierId} onUpdate={(nextValue) => setCarrier(nextValue)}>
+          <Select value={carrierId} onUpdate={(nextValue) => setCarrierId(nextValue)}>
             {carriers.map(carrier => <Select.Option key={carrier.id} value={carrier.id.toString()}>{carrier.name}</Select.Option>)}
           </Select>
         </FormRow>
 
         <FormRow label="Комментарии:">
-          <TextArea name="notes" defaultValue={offer.notes || ''}></TextArea>
+          <TextArea name="notes" defaultValue={data.offer && data.offer.notes || ''}></TextArea>
         </FormRow>
 
         <Button type="submit" loading={isSubmitting}>Сохранить</Button>
@@ -78,15 +99,34 @@ const OfferForm: React.FC<DataOfferForm> = ({data, intent = 'NEW'}) => {
 export default OfferForm;
 
 
-export async function OfferFormAction({request, params}: {request: Request, params: Params}) {
-  if (!params.id || isNaN(parseInt(params.id)) || parseInt(params.id) < 1) {
-    throw json({message: 'Невалидный URL'}, {status: 500});
-  }
-
+export async function offerFormAction({request, params}: {request: Request, params: Params}) {
   const formData = await request.formData();
   const formObj = Object.fromEntries(formData.entries());
+
+  if (formObj.intent === 'NEW') {
+    let response: Response;
+    try {
+      response = await fetch('http://localhost:3000/offers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formObj)
+      });
+    } catch (error) {
+      throw json({message: 'При сохранении возникла ошибка'}, {status: 500});
+    }
+
+    if (!response.ok) {
+      return response;
+    }
+  }
   
-  if (formObj.intent = 'EDIT') {
+  if (formObj.intent === 'EDIT') {
+    if (!params.id || isNaN(parseInt(params.id)) || parseInt(params.id) < 1) {
+      throw json({message: 'Невалидный URL'}, {status: 500});
+    }
+
     try {
       await fetch('http://localhost:3000/offers/'+params.id, {
         method: 'PATCH',
