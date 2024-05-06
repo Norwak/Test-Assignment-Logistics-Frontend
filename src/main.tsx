@@ -14,6 +14,8 @@ import { ThemeProvider } from '@gravity-ui/uikit';
 import Loading from './components/Loading';
 import AdminOffersPage from './pages/AdminOffers.page';
 import { deleteOfferAction } from './components/tables/OffersAdminTable';
+import EditOffersPage, { offerLoader } from './pages/EditOffers.page';
+import { OfferFormAction } from './components/forms/OfferForm';
 
 
 const router = (setLoaded: Dispatch<SetStateAction<boolean>>) => createBrowserRouter([
@@ -27,7 +29,8 @@ const router = (setLoaded: Dispatch<SetStateAction<boolean>>) => createBrowserRo
         path: 'admin/',
         action: deleteOfferAction,
         children: [
-          {index: true, element: <AdminOffersPage />, loader: offersLoader}
+          {index: true, element: <AdminOffersPage />, loader: offersLoader},
+          {path: ':id/edit/', element: <EditOffersPage />, loader: offerLoader, action: OfferFormAction}
         ],
       },
     ]

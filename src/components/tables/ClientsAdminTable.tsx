@@ -1,14 +1,13 @@
 import { Table, withTableActions, withTableSorting } from "@gravity-ui/uikit";
+import { Client } from "../../types/Client.type";
 
 export default function ClientsAdminTable() {
-  type Item = {id: number, name: string};
-
   const columns = [
     {id: 'id', name: 'Номер клиента', meta: {sort: true}},
     {id: 'name', name: 'Имя', meta: {sort: true}},
   ];
 
-  const data: Item[] = [
+  const data: Client[] = [
     {id: 1, name: 'Ozon'},
     {id: 2, name: 'Wildberries'},
   ];

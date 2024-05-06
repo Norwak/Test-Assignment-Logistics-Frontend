@@ -21,7 +21,7 @@ export default function ErrorPage() {
       <main className="mt30">
         <Container maxWidth='l'>
           <h1 className="mt">{title}</h1>
-          <p>{error.data && (error.data.message || error.error.message)}</p>
+          <p>{error.data && error.data.message || error.error && error.error.message || ''}</p>
         </Container>
       </main>
       <style>

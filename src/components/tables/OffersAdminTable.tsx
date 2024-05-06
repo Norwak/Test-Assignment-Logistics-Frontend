@@ -1,31 +1,15 @@
 import { Table, withTableActions, withTableSorting } from "@gravity-ui/uikit";
-import { json, redirect, useLoaderData, useSubmit } from "react-router-dom";
+import { json, redirect, useLoaderData, useNavigate, useSubmit } from "react-router-dom";
 import { padZeros } from "../../utility/functions";
 import parse from 'html-react-parser';
-
-
-type Item = {
-  id: number,
-  date: string,
-  humanDate?: string,
-  notes?: string | null,
-  status: number,
-  humanStatus?: string,
-  client: {
-    name: string
-  },
-  carrier: {
-    name: string,
-    phone?: string | null,
-    atiId?: number | null,
-    atiLink?: any | string | null
-  }
-};
+import { Offer } from "../../types/Offer.type";
+import { dateTimeParse } from "@gravity-ui/date-utils";
 
 
 export default function OffersAdminTable() {
   const submit = useSubmit();
-  const offers = useLoaderData() as Item[];
+  const navigate = useNavigate();
+  const offers = useLoaderData() as Offer[];
 
   const columns = [
     {id: 'id', name: 'Номер заявки', meta: {sort: true}},
@@ -39,13 +23,14 @@ export default function OffersAdminTable() {
   ];
 
   for (const offer of offers) {
-    const date = new Date(offer.date);
-    const days = padZeros(date.getDate());
-    const month = padZeros(date.getMonth()+1);
-    const year = date.getFullYear();
-    const hours = padZeros(date.getUTCHours());
-    const minutes = padZeros(date.getMinutes());
-    offer.humanDate = `${days}.${month}.${year} ${hours}:${minutes}`;
+    // const date = new Date(offer.date);
+    // const days = padZeros(date.getDate());
+    // const month = padZeros(date.getMonth()+1);
+    // const year = date.getFullYear();
+    // const hours = padZeros(date.getUTCHours());
+    // const minutes = padZeros(date.getMinutes());
+    // offer.humanDate = `${days}.${month}.${year} ${hours}:${minutes}`;
+    offer.humanDate = dateTimeParse(offer.date)?.format('DD.MM.YYYY HH.mm');
 
     switch (offer.status) {
       case 0:
@@ -67,12 +52,14 @@ export default function OffersAdminTable() {
   const getRowActions = () => {
     return [
       {
-        text: 'Edit',
-        handler: () => {},
+        text: 'Изменить',
+        handler: (item: Offer) => {
+          navigate(`/admin/${item.id}/edit/`);
+        },
       },
       {
-        text: 'Remove',
-        handler: (item: Item) => {
+        text: 'Удалить',
+        handler: (item: Offer) => {
           const confirmed = confirm(`Точно удалить строку номер ${item.id}?`);
           if (confirmed) {
             submit({id: item.id}, {method: 'DELETE', encType: 'application/json', action: '/admin/'});
@@ -105,8 +92,13 @@ export default function OffersAdminTable() {
 
 export async function deleteOfferAction({request}: {request: Request}) {
   if (request.method === 'DELETE') {
-    const id = await request.json();
-    // const response = await fetch();
+    try {
+      const data = await request.json();
+      await fetch('http://localhost:3000/offers/'+data.id, {method: 'DELETE'});
+    } catch (error) {
+      throw json({message: 'Не получилось удалить строку'}, {status: 500});
+    }
+
   }
 
   return redirect('/admin/');
