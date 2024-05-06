@@ -6,4 +6,4 @@
 
 Запуск через npm run dev
 
-BACKEND для этого проекта можно найти по [ссылке](https://github.com/Norwak/Test-Assignment-Logistics-Backend').
+BACKEND для этого проекта можно найти по [ссылке](https://github.com/Norwak/Test-Assignment-Logistics-Backend).
