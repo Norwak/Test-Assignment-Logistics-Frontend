@@ -23,7 +23,7 @@ export default function Header() {
     <header className='header ptb15'>
       <Container maxWidth='l'>
         <div className="header__inner">
-          <div className="flex-csb rowrev gap15">
+          <div className="flex-csb rowrev gap15 mbl-col">
 
             <div className="header__switch">
               <Select value={isAdmin} onUpdate={toggleAdmin}>
@@ -33,7 +33,7 @@ export default function Header() {
             </div>
 
             {isAdmin.includes('true') && (
-              <nav className="header__menu flex-cl gap15">
+              <nav className="header__menu flex-cl gap15 mbl-mt10">
                 <div className="header__menu-item">
                   <Link to="/admin/">Заявки</Link>
                 </div>
@@ -47,7 +47,7 @@ export default function Header() {
             )}
 
             {isAdmin.includes('false') && (
-              <Link to="/">Система ведения заявок для логистов</Link>
+              <Link to="/" className='mbl-mt10'>Система ведения заявок для логистов</Link>
             )}
 
           </div>
